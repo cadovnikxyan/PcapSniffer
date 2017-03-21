@@ -19,16 +19,25 @@ void Sniffer::read()
 {
     while (int returnValue = pcap_next_ex(pcap, &header, &packet) >= 0)
        {
+        char destIP[INET_ADDRSTRLEN];
+        ipheader = (struct ip*)(packet + sizeof(struct ether_header));
+        if(ipheader->ip_p==IPPROTO_UDP){
+        udpHeader = (struct udphdr*)(packet + sizeof(struct ether_header) + sizeof(struct ip));
+        inet_ntop(AF_INET,&(ipheader->ip_dst),destIP ,INET_ADDRSTRLEN);
+           printf("Epoch Time: %ld:%ld seconds  Packet size: %ld bytes  Packet IP-Dest %s Packet Port-Dest %d \n"
+                  , header->ts.tv_sec
+                  , header->ts.tv_usec
+                  , header->len
+                  , destIP
+                  ,ntohs(udpHeader->dest));
 
-           printf("Epoch Time: %ld:%ld seconds  Packet size: %ld bytes  Packet IP-Dest %ld \n", header->ts.tv_sec, header->ts.tv_usec,header->len, pcap_offline_filter(&fp,header,(const u_char *)"ip"));
+//                  , pcap_offline_filter(&fp,header,(const u_char *)"ip"));
 
-           // Show a warning if the length captured is different
            if (header->len != header->caplen)
                printf("Warning! Capture size different than packet size: %ld bytes\n", header->len);
-
-               // Add two lines between packets
                printf("\n\n");
        }
+    }
 }
 
 Sniffer::~Sniffer()
