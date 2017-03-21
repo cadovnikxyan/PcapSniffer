@@ -23,14 +23,13 @@ class Sniffer
 
 public:
     Sniffer(std::string);
-    void setFilters(const std::list<std::__cxx11::string> &);
+    void setFilters(const std::string host, const std::string port);
     void read();
    ~Sniffer();
 private:
     std::string path;
     pcap_t* pcap;
     const u_char *packet;
-    u_int packetCount = 0;
     char errBuf[PCAP_ERRBUF_SIZE];
     struct ip* ipheader;
     struct udphdr* udpHeader;

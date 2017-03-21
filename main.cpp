@@ -1,12 +1,16 @@
-#include <iostream>
 #include "sniffer.h"
 
 using namespace std;
 
 int main(int argc, char *argv[])
 {
-    Sniffer* s = new Sniffer("data1.pcap");
-    std::list<std::string> list;
-    s->read();
+    --argc;++argv;
+auto sdd="1231";
+    Sniffer s("data2.pcap");
+
+    s.setFilters("192.168.88.102","");
+    s.read();
+
+
     return 0;
 }

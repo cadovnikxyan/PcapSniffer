@@ -1,18 +1,23 @@
 #include "sniffer.h"
 #include "stdio.h"
+#include <boost/algorithm/string/replace.hpp>
 Sniffer::Sniffer(std::string path_):path(path_)
 {
-    FILE* fd = fopen(path.c_str(),"r");
-    pcap = pcap_fopen_offline(fd,errBuf);
-
+    pcap = pcap_open_offline(path.c_str(),errBuf);
 }
 
-void Sniffer::setFilters(const std::list<std::string> &filter_list)
+void Sniffer::setFilters(const std::string host,const std::string port)
 {
-    for(std::string s : filter_list){
-        pcap_compile(pcap, &fp, s.c_str() , 0 ,netp);
-    }
-    pcap_setfilter(pcap, &fp);
+        std::string host_ ="dst host _i_" ;
+        std::string port_ ="dst port _p_" ;
+
+        boost::replace_all(host_, "_i_", host);
+        boost::replace_all(port_, "_p_", port);
+
+        pcap_compile(pcap, &fp, host_.c_str() , 0 ,netp);
+        pcap_compile(pcap, &fp, port_.c_str() , 0 ,netp);
+
+        pcap_setfilter(pcap, &fp);
 }
 
 void Sniffer::read()
@@ -22,22 +27,21 @@ void Sniffer::read()
         char destIP[INET_ADDRSTRLEN];
         ipheader = (struct ip*)(packet + sizeof(struct ether_header));
         if(ipheader->ip_p==IPPROTO_UDP){
-        udpHeader = (struct udphdr*)(packet + sizeof(struct ether_header) + sizeof(struct ip));
-        inet_ntop(AF_INET,&(ipheader->ip_dst),destIP ,INET_ADDRSTRLEN);
-           printf("Epoch Time: %ld:%ld seconds  Packet size: %ld bytes  Packet IP-Dest %s Packet Port-Dest %d \n"
-                  , header->ts.tv_sec
-                  , header->ts.tv_usec
-                  , header->len
-                  , destIP
-                  ,ntohs(udpHeader->dest));
+            udpHeader = (struct udphdr*)(packet + sizeof(struct ether_header) + sizeof(struct ip));
+            inet_ntop(AF_INET,&(ipheader->ip_dst),destIP ,INET_ADDRSTRLEN);
+               printf("Epoch Time: %ld:%ld seconds  Packet size: %ld bytes  Packet IP-Dest %s Packet Port-Dest %d \n"
+                      , header->ts.tv_sec
+                      , header->ts.tv_usec
+                      , header->len
+                      , destIP
+                      ,ntohs(udpHeader->dest));
 
-//                  , pcap_offline_filter(&fp,header,(const u_char *)"ip"));
 
-           if (header->len != header->caplen)
-               printf("Warning! Capture size different than packet size: %ld bytes\n", header->len);
-               printf("\n\n");
-       }
-    }
+               if (header->len != header->caplen)
+                   printf("Warning! Capture size different than packet size: %ld bytes\n", header->len);
+                   printf("\n\n");
+           }
+      }
 }
 
 Sniffer::~Sniffer()
