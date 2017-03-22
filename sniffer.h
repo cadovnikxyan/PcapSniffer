@@ -22,8 +22,8 @@ class Sniffer
 
 
 public:
-    Sniffer(std::string);
-    void setFilters(const std::string host, const std::string port);
+    Sniffer(std::string&);
+    void setFilters(const std::string &host, const std::string &port);
     void read();
    ~Sniffer();
 private:

@@ -1,12 +1,12 @@
 #include "sniffer.h"
 #include "stdio.h"
 #include <boost/algorithm/string/replace.hpp>
-Sniffer::Sniffer(std::string path_):path(path_)
+Sniffer::Sniffer(std::string& path_):path(path_)
 {
     pcap = pcap_open_offline(path.c_str(),errBuf);
 }
 
-void Sniffer::setFilters(const std::string host,const std::string port)
+void Sniffer::setFilters(const std::string& host,const std::string& port)
 {
         std::string host_ ="dst host _i_" ;
         std::string port_ ="dst port _p_" ;
@@ -35,7 +35,7 @@ void Sniffer::read()
                 localtime_r(&t,&dt);
                 strftime(buffer, sizeof(buffer), "%F %m %R", &dt);
                 auto time =  std::string(buffer);
-               printf("Дата - Время перехвата: %s:%ld  Размер пакета: %ld байт  Адрес назначения %s Порт назанчения %d \n"
+               printf("Дата - Время перехвата: %s:%ld  Размер пакета: %d байт  Адрес назначения %s Порт назанчения %d \n"
                       , time.c_str()
                       , header->ts.tv_usec
                       , header->len
