@@ -34,13 +34,13 @@ void Sniffer::read()
                 time_t t= header->ts.tv_sec;
                 localtime_r(&t,&dt);
                 strftime(buffer, sizeof(buffer), "%F %R", &dt);
-                auto time =  std::string(buffer);
-                printf("Дата - Время перехвата: %s:%ld  Размер пакета: %d байт  Адрес назначения: %s Порт назначения: %d \n"
+                auto time = std::string(buffer);
+                printf("Таймстемп захвата пакета: %s:%ld Адрес назначения: %s Порт назначения: %d Размер пакета: %d байт\n"
                       , time.c_str()
                       , header->ts.tv_usec
-                      , header->len
                       , destIP
-                      , ntohs(udpHeader->dest));
+                      , ntohs(udpHeader->dest)
+                      , header->len);
                 printf("\n\n");
            }
       }
