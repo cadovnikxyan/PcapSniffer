@@ -1,13 +1,13 @@
 #include "sniffer.h"
 
-using namespace std;
 
 
-bool isIp(const string& str)
+
+bool isIp(const std::string& str)
 {
     struct sockaddr_in sa;
     const char* ip_str = str.c_str();
-    if(ip_str==nullptr) return 0;
+    if(ip_str==nullptr) return false;
     return inet_pton(AF_INET, ip_str, &(sa.sin_addr))!=0;
  }
 
@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
         }
 
         if(path.empty()){
-            cout<<"Не указан .pcap файл \n";
+            std::cout<<"Не указан .pcap файл \n";
             return 0;
         }
 
@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
            if(isIp(*a)){
                ip_=*a;
            }else{
-               cout<<"Введенный адрес не является IP, фильтрация по всем адресам \n";
+               std::cout<<"Введенный адрес не является IP, фильтрация по всем адресам \n";
            }
        }
        if(p!=args.end()){
@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
            if(isPort(*p)){
                port=*p;
            }else{
-               cout<<"Введенное значение не является портом, фильтрация по всем портам \n";
+               std::cout<<"Введенное значение не является портом, фильтрация по всем портам \n";
            }
        }
        s->setFilters(ip_,port);
