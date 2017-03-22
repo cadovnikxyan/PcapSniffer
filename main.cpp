@@ -10,17 +10,18 @@ bool isIp(const string& str)
  }
 int main(int argc, char *argv[])
 {
-    Sniffer* s;
+
     if(argc>1){
         --argc;++argv;
 
         std::vector<std::string> args;
         std::string ip_,port,path;
+
         for(auto i=0;i<argc;++i){
             args.push_back(argv[i]);
-            auto file = args[i].find(".pcap");
+            auto file = args.back().find(".pcap");
             if(file !=std::string::npos){
-                path = args[i];
+                path = args.back();
             }
         }
 
@@ -29,10 +30,9 @@ int main(int argc, char *argv[])
             return 0;
         }
 
-       s = new Sniffer(path);
-
-       auto a =find(args.begin(),args.end(),"-a");
-       auto p =find(args.begin(),args.end(),"-p");
+       auto s = new Sniffer(path);
+       auto a = find(args.begin(),args.end(),"-a");
+       auto p = find(args.begin(),args.end(),"-p");
 
        if(a!=args.end()){
            a++;
