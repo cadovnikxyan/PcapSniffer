@@ -6,12 +6,21 @@ using namespace std;
 bool isIp(const string& str)
 {
     struct sockaddr_in sa;
-    return inet_pton(AF_INET, str.c_str(), &(sa.sin_addr))!=0;
+    const char* ip_str = str.c_str();
+    if(ip_str==nullptr) return 0;
+    return inet_pton(AF_INET, ip_str, &(sa.sin_addr))!=0;
  }
+
+bool isPort(const std::string& s)
+{
+    return !s.empty() && std::find_if(s.begin(),
+        s.end(), [](char c) { return !std::isdigit(c); }) == s.end();
+}
+
 int main(int argc, char *argv[])
 {
 
-    if(argc>1){
+    if(argc>1 ){
         --argc;++argv;
 
         std::vector<std::string> args;
@@ -33,7 +42,6 @@ int main(int argc, char *argv[])
        auto s = new Sniffer(path);
        auto a = find(args.begin(),args.end(),"-a");
        auto p = find(args.begin(),args.end(),"-p");
-
        if(a!=args.end()){
            a++;
            if(isIp(*a)){
@@ -44,10 +52,11 @@ int main(int argc, char *argv[])
        }
        if(p!=args.end()){
            p++;
-           if(atoi((*p).c_str())){
+
+           if(isPort(*p)){
                port=*p;
            }else{
-               cout<<"Введенное значение является портом, фильтрация по всем портам \n";
+               cout<<"Введенное значение не является портом, фильтрация по всем портам \n";
            }
        }
        s->setFilters(ip_,port);

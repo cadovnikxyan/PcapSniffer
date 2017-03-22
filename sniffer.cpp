@@ -3,7 +3,11 @@
 #include <boost/algorithm/string/replace.hpp>
 Sniffer::Sniffer(const std::string& path)
 {
-    pcap = pcap_open_offline(path.c_str(),errBuf);
+        pcap = pcap_open_offline(path.c_str(),errBuf);
+        if(pcap==nullptr){
+            std::cout<<errBuf<<std::endl;
+            exit(1);
+        }
 }
 
 void Sniffer::setFilters(const std::string& host,const std::string& port)
@@ -22,6 +26,7 @@ void Sniffer::setFilters(const std::string& host,const std::string& port)
 
 void Sniffer::read()
 {
+
     while (int returnValue = pcap_next_ex(pcap, &header, &packet) >= 0)
        {
         char destIP[INET_ADDRSTRLEN];
