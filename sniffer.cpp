@@ -29,16 +29,19 @@ void Sniffer::read()
         if(ipheader->ip_p==IPPROTO_UDP){
             udpHeader = (struct udphdr*)(packet + sizeof(struct ether_header) + sizeof(struct ip));
             inet_ntop(AF_INET,&(ipheader->ip_dst),destIP ,INET_ADDRSTRLEN);
-               printf("Epoch Time: %ld:%ld seconds  Packet size: %ld bytes  Packet IP-Dest %s Packet Port-Dest %d \n"
-                      , header->ts.tv_sec
+                struct tm dt;
+                char buffer [32];
+                time_t t= header->ts.tv_sec;
+                localtime_r(&t,&dt);
+                strftime(buffer, sizeof(buffer), "%F %m %R", &dt);
+                auto time =  std::string(buffer);
+               printf("Дата - Время перехвата: %s:%ld  Размер пакета: %ld байт  Адрес назначения %s Порт назанчения %d \n"
+                      , time.c_str()
                       , header->ts.tv_usec
                       , header->len
                       , destIP
                       ,ntohs(udpHeader->dest));
 
-
-               if (header->len != header->caplen)
-                   printf("Warning! Capture size different than packet size: %ld bytes\n", header->len);
                    printf("\n\n");
            }
       }
