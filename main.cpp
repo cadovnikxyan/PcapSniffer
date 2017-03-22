@@ -52,7 +52,6 @@ int main(int argc, char *argv[])
        }
        if(p!=args.end()){
            p++;
-
            if(isPort(*p)){
                port=*p;
            }else{
